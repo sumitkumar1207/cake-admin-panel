@@ -1,0 +1,117 @@
+/* .Sidebar-background-23,
+body .Sidebar-background-432,
+body .Sidebar-background-405{
+ background-image: none  !important;
+}
+
+.Sidebar-blackBackground-10:after{
+ background-color: #FFF;
+}
+
+.Sidebar-list-24{
+ color: black !important;
+}
+
+.Sidebar-blackBackground-10:after{
+ opacity: 0 !important;
+}
+
+.Sidebar-blue-50, .Sidebar-blue-50:hover, .Sidebar-blue-50:focus{
+ box-shadow: none !important;
+ background: linear-gradient(60deg, #42a5f5, #1e88e5) !important;
+}
+ */
+
+ .sidebar-logo{
+  top: -12.5px;
+  max-width: 35px;
+  position: relative;
+ }
+
+
+ .report-label{
+  font-size: 13px;
+  display: block;
+  color: #404040;
+  letter-spacing: .5px !important;
+  margin-bottom: 5px;
+  font-weight: 500;
+  padding-right: 2.5px;
+  text-transform: uppercase;
+  /* border-bottom: 1.5px dashed #2196f3; */
+ }
+
+ .report-content{
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+  min-height: 55px;
+  border-bottom: 1px solid #eaeaea;
+ }
+ 
+  
+
+ .MuiInput-underline:after{
+  border-color: #2196f3 !important;
+ }
+
+ .Sidebar-logoNormal-18{
+  color: #ee4e5a !important;
+ }
+.ReactTable .rt-thead .rt-th.-cursor-pointer > div:first-of-type:after{
+ content: '\2195' !important;
+}
+
+.ReactTable .rt-thead .rt-th.-cursor-pointer.-sort-asc > div:first-of-type:after{
+ width: 0;
+ height: 0;
+ top: -1px;
+ position: relative;
+ content: '' !important;
+ border-top: 7.5px solid grey;
+ border-left: 5px solid transparent;
+ border-right: 5px solid transparent;
+}
+
+.ReactTable .rt-thead .rt-th.-cursor-pointer.-sort-desc > div:first-of-type:after{
+ content: '' !important;
+ width: 0;
+ height: 0;
+ border-left: 5px solid transparent;
+ border-right: 5px solid transparent;
+ border-bottom: 7.5px solid grey;
+}
+
+.text-right{
+ text-align: right;
+}
+
+.text-center{
+text-align: center; 
+}
+
+.rt-resizable-header-content{
+ text-align: left;
+}
+
+.makeStyles-a-452,
+.MuiFormLabel-root.Mui-focused{
+ color: #2196f3 !important;
+}
+
+.MuiPaginationItem-textPrimary.Mui-selected{
+ background-color: #2196f3 !important ;
+}
+
+
+
+
+input[type="file"].MuiInput-input{
+ opacity: 0;
+}
+
+.MuiFormLabel-root[data-shrink="true"]+div input[type="file"].MuiInput-input{
+ opacity: 1 !important;
+}
+
+/* Print the component in multiple pages */
+@media print { html, body { height: initial !important; overflow: initial !important; }}

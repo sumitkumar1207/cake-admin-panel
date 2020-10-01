@@ -1,0 +1,28 @@
+{
+  "name": "react-material-dashboard",
+  "homepage": "https://google.com",
+  "authors": [
+    "Saif"
+  ],
+  "description": "A React Project based on Material Design",
+  "main": "public/index.html",
+  "keywords": [
+    "material",
+    "design",
+    "material-ui",
+    "material",
+    "design",
+    "google",
+    "twitter"
+  ],
+  "license": "Saif TIM License",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "build"
+  ],
+  "private": true
+}
