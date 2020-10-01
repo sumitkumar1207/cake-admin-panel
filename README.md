@@ -1,4 +1,4 @@
-# ReactMaterialDashboard
+# CakeShopDashboard
 
 > A React project
 
@@ -16,4 +16,4 @@ npm run build
 
 ```
 
-For a detailed explanation on how things work, Contact us.
+For a detailed explanation on how things work, Contact me [check here](https://sumitkumar1207.github.io/my-portfolio/).
