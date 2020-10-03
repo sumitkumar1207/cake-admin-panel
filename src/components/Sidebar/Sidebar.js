@@ -389,7 +389,7 @@ class Sidebar extends React.Component {
                 primary={
                   is_user_name && is_user_name !== '' ? is_user_name : is_user_email && is_user_email !== '' ? is_user_email :
                     is_hospital_name && is_hospital_name !== "" ? is_hospital_name : is_hospital_email && is_hospital_email !== "" ? is_hospital_email :
-                      "Unaniq Admin"
+                      "Cake Shop Admin"
                 }
                 secondary={
                   <b
