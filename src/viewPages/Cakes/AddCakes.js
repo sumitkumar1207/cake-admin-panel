@@ -27,6 +27,7 @@ import { validateAddCakeInput } from 'validation/addCake';
  * Api
 */
 import { AddCake } from 'store/actions/AdminActions/cakeActions';
+import { uploadImage } from 'store/actions/uploadMediaActions/uploadMediaActions';
 
 import styles from "assets/jss/views/regularFormsStyle";
 import { red } from "@material-ui/core/colors";
@@ -38,7 +39,6 @@ class AddCakes extends Component {
     this.state = {
       uploadedUrls: [],
       selectedFiles: "",
-      clear_speciality: true,
       cake_name: null,
       cake_description: null,
       cake_price: null,
@@ -62,7 +62,7 @@ class AddCakes extends Component {
     const { insertSuccess, uploadSuccess } = nextProps;
     // console.log('nextProps :>> ', nextProps);
     if (insertSuccess) {
-      // document.getElementById("cake_image").value = "";
+      document.getElementById("cake_image").value = "";
       nextProps.resetSuccessFlag()
       setTimeout(() => {
         nextProps.resetSuccess()
@@ -130,7 +130,6 @@ class AddCakes extends Component {
   submitForm = async (event) => {
     event.preventDefault();
     this.state.cake_image = this.state.uploadedUrls.length > 0 ? this.state.uploadedUrls[0].path : ""
-    let { status, message } = this.state;
 
     const { errors, isValid } = validateAddCakeInput(this.state);
     // Check Validation 
@@ -194,8 +193,8 @@ class AddCakes extends Component {
           <CardBody>
             <form onSubmit={(e) => this.submitForm(e)}>
               <GridContainer spacing={3} >
-                {/* <GridItem xs={12} sm={6} md={6} lg={6} style={{ marginBottom: '25px' }} > */}
-                {/* <TextField
+                <GridItem xs={12} sm={6} md={6} lg={6} style={{ marginBottom: '25px' }} >
+                  <TextField
                     fullWidth
                     label="Cake Image"
                     id="cake_image"
@@ -208,8 +207,8 @@ class AddCakes extends Component {
                       name: "image",
                       autoComplete: "off",
                     }}
-                  /> */}
-                {/* </GridItem> */}
+                  />
+                </GridItem>
 
                 <GridItem xs={12} sm={6} md={6} lg={6} style={{ marginBottom: '25px' }} >
                   <TextField
@@ -280,11 +279,13 @@ const mapStateToProps = state => ({
   insertSuccess: state.AdminCakeReducers.insertSuccess,
   insertMessage: state.AdminCakeReducers.insertMessage,
   responseMessage: state.AdminCakeReducers.responseMessage,
+  uploadedUrls: state.UploadMediaReducers.uploadedUrls,
+  uploadSuccess: state.UploadMediaReducers.uploadSuccess,
 });
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     AddCake,
-    // uploadImage,
+    uploadImage,
     resetSuccess: () => ({ type: "REST_RESPONSE_MESSAGE" }),
     resetSuccessFlag: () => ({ type: "RESET_SUCCESS_FLAG" }),
   }, dispatch)
