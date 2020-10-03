@@ -15,6 +15,7 @@ import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import Dashboard from "viewPages/Dashboard";
 //Cake components
 import AddCakes from "viewPages/Cakes/AddCakes";
+import Cakes from "viewPages/Cakes/CakesList";
 
 import DashboardUserList from "viewPages/User/DashboardUserList";
 import UserList from "viewPages/User/UserList";
@@ -37,6 +38,14 @@ var dashRoutes = [
     rtlName: "",
     state: "cakesCollapse",
     views: [
+      {
+        path: "/get-cakes",
+        name: "Cakes",
+        mini: "CL",
+        component: Cakes,
+        layout: "/admin",
+        visible: true
+      },
       {
         path: "/add-cakes",
         name: "Add Cakes",
