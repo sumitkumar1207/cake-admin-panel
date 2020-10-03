@@ -19,6 +19,7 @@ import AddCakes from "viewPages/Cakes/AddCakes";
 import Cakes from "viewPages/Cakes/CakesList";
 //Units routes
 import AddUnits from "viewPages/Units/AddUnits";
+import UnitsList from "viewPages/Units/UnitsList";
 
 import DashboardUserList from "viewPages/User/DashboardUserList";
 import UserList from "viewPages/User/UserList";
@@ -41,6 +42,14 @@ var dashRoutes = [
     rtlName: "",
     state: "unitsCollapse",
     views: [
+      {
+        path: "/get-units",
+        name: "Units",
+        mini: "UL",
+        component: UnitsList,
+        layout: "/admin",
+        visible: true
+      },
       {
         path: "/add-units",
         name: "Add Units",
