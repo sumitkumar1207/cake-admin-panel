@@ -9,6 +9,7 @@ import WidgetsIcon from "@material-ui/icons/Widgets";
 import HealingIcon from '@material-ui/icons/Healing';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 /**
  * COMPONENTS:
  */
@@ -16,6 +17,8 @@ import Dashboard from "viewPages/Dashboard";
 //Cake components
 import AddCakes from "viewPages/Cakes/AddCakes";
 import Cakes from "viewPages/Cakes/CakesList";
+//Units routes
+import AddUnits from "viewPages/Units/AddUnits";
 
 import DashboardUserList from "viewPages/User/DashboardUserList";
 import UserList from "viewPages/User/UserList";
@@ -30,6 +33,23 @@ var dashRoutes = [
     component: Dashboard,
     layout: "/admin",
     visible: true
+  },
+  {
+    collapse: true,
+    name: "Units",
+    icon: AssessmentIcon,
+    rtlName: "",
+    state: "unitsCollapse",
+    views: [
+      {
+        path: "/add-units",
+        name: "Add Units",
+        mini: "AD",
+        component: AddUnits,
+        layout: "/admin",
+        visible: true
+      },
+    ]
   },
   {
     collapse: true,
