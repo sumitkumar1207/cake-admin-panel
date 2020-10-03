@@ -35,6 +35,11 @@ export default (state = initialState, action) => {
           status: action.payload.success,
         }
       };
+    case type.GET_CAKES:
+      return {
+        ...state,
+        cakeList: action.Records,
+      };
     case "RESET_SUCCESS_FLAG":
       return {
         ...state,
