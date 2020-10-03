@@ -5,4 +5,5 @@ module.exports = {
    *  Cake:
   */
   ADD_CAKES: "ADD_CAKES",
+  GET_CAKES: "GET_CAKES",
 };
