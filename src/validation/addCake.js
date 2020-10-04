@@ -49,6 +49,7 @@ export const validateEditCakeInput = (data) => {
   data.cake_name = !isEmpty(data.cake_name) ? data.cake_name : '';
   data.cake_description = !isEmpty(data.cake_description) ? data.cake_description : '';
   data.cake_price = !isEmpty(data.cake_price) ? data.cake_price : '';
+  data.unit_id = !isEmpty(data.unit_id) ? data.unit_id : '';
 
   if (data.cake_name === '') {
     errors.cake_name = 'Cake name can not be empty'
@@ -72,6 +73,10 @@ export const validateEditCakeInput = (data) => {
 
   if (data.cake_price === '') {
     errors.cake_price = 'Price can not be empty'
+  }
+
+  if (data.unit_id === '') {
+    errors.unit_id = 'Unit can not be empty'
   }
 
   return { errors, isValid: isEmpty(errors) };
