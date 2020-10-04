@@ -158,9 +158,9 @@ class AddCakes extends Component {
     const { errors, isValid } = validateAddCakeInput(this.state.cake);
     // Check Validation 
     if (!isValid) {
-      let { cake_name, cake_description, cake_price } = errors
+      let { cake_name, cake_description, cake_price, unit_id } = errors
       // console.log('errors :>> ', errors);
-      let message = cake_name || cake_description || cake_price
+      let message = cake_name || cake_description || cake_price || unit_id
 
       this.showCustomSnackbar(message)
     } else {
@@ -224,19 +224,7 @@ class AddCakes extends Component {
           <CardBody>
             <form onSubmit={(e) => this.submitForm(e)}>
               <GridContainer spacing={3} >
-                <GridItem sm={12} md={6} lg={6} style={{ 'marginBottom': '25px' }}>
-                  <Autocomplete
-                    key={clear_unit}
-                    blurOnSelect={true}
-                    options={unitList}
-                    value={tempSelected.unit_id}
-                    getOptionLabel={(option) => `${option.unit_value} ${option.unit_name}`}
-                    onChange={(e, value) => this.handleOnSelectComponet(e, value, "unit_id")}
-                    renderInput={(params) => <TextField style={{ width: '100%' }} {...params} label="Select Unit" variant="standard" />}
-                  />
-                </GridItem>
-
-                <GridItem xs={12} sm={6} md={6} lg={6} style={{ marginBottom: '25px' }} >
+                <GridItem xs={12} sm={12} md={12} lg={12} style={{ marginBottom: '25px' }} >
                   <TextField
                     fullWidth
                     label="Cake Image"
@@ -305,7 +293,17 @@ class AddCakes extends Component {
                     }}
                   />
                 </GridItem>
-
+                <GridItem sm={12} md={6} lg={6} style={{ 'marginBottom': '25px' }}>
+                  <Autocomplete
+                    key={clear_unit}
+                    blurOnSelect={true}
+                    options={unitList}
+                    value={tempSelected.unit_id}
+                    getOptionLabel={(option) => `${option.unit_value} ${option.unit_name}`}
+                    onChange={(e, value) => this.handleOnSelectComponet(e, value, "unit_id")}
+                    renderInput={(params) => <TextField style={{ width: '100%' }} {...params} label="Select Unit" variant="standard" />}
+                  />
+                </GridItem>
                 <GridItem sm={12} md={12} lg={12} style={{ textAlign: 'center' }} >
                   <Button type="submit" color="rose">Submit</Button>
                 </GridItem>
