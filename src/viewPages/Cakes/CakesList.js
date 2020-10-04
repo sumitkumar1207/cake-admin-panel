@@ -11,6 +11,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Avatar from '@material-ui/core/Avatar';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import Snackbar from "components/Snackbar/Snackbar";
 // @material-ui/icons
 import Edit from "@material-ui/icons/Edit";
 import Close from "@material-ui/icons/Close";
@@ -27,9 +29,14 @@ import { makeFilterPlaceholder, customFilterMethod } from "helpers/collection";
 //Base Url
 import { BASEURL } from "config/index";
 /**
+ * Validate inputData
+*/
+import { validateEditCakeInput } from 'validation/addCake';
+/**
  * APIs call actions
- */
+*/
 import { getCakeList, updateCake, deleteCake } from 'store/actions/AdminActions/cakeActions';
+import { getUnitList } from 'store/actions/AdminActions/unitActions';
 import { uploadImage } from 'store/actions/uploadMediaActions/uploadMediaActions';
 import { TextField } from '@material-ui/core';
 
@@ -46,8 +53,12 @@ class Cakes extends Component {
     super(props);
     this.state = {
       openEditDialog: false,
+      tempSelected: {
+        unit_id: null,
+      },
       selectedCake: {
         cake_id: null,
+        unit_id: null,
         cake_image: '',
         cake_name: null,
         cake_description: null,
@@ -55,11 +66,16 @@ class Cakes extends Component {
       },
       uploadedUrls: [],
       existing_icon: "",
+      place: 'br',
+      color: 'danger',
+      message: '',
+      status: false
     };
   };
 
   componentDidMount() {
     this.props.getCakeList();
+    this.props.getUnitList();
   };
 
   componentWillReceiveProps(nextProps) {
@@ -101,16 +117,21 @@ class Cakes extends Component {
 
   handleOnEditTableRow = async (e, rowItem) => {
     await this.handleClickOpen();
-    let { selectedCake } = this.state;
-    this.existing_icon = rowItem.cake_image;
-
+    let { selectedCake, tempSelected, existing_icon } = this.state;
+    let { unitList } = this.props;
+    existing_icon = rowItem.cake_image;
+    if (unitList && unitList.length > 0) {
+      let arr = unitList.filter(({ unit_id }) => unit_id === rowItem.unit_id)
+      tempSelected.unit_id = arr && arr.length > 0 ? arr[0] : null;
+    };
     // console.log('rowItem', rowItem)
     selectedCake.cake_id = rowItem.cake_id;
+    selectedCake.unit_id = rowItem.unit_id;
     selectedCake.cake_image = rowItem.cake_image;
     selectedCake.cake_name = rowItem.cake_name;
     selectedCake.cake_description = rowItem.cake_description;
     selectedCake.cake_price = rowItem.cake_price;
-    await this.setState({ ...this.state, selectedCake });
+    await this.setState({ ...this.state, selectedCake, existing_icon });
   };
 
   handleOnDeleteTableRow = async (e, rowItem) => {
@@ -121,12 +142,33 @@ class Cakes extends Component {
   };
   handleFinalSubmit = async (e) => {
     e.preventDefault();
-    await this.handleClose();
     const { selectedCake, existing_icon, uploadedUrls } = this.state;
     selectedCake.cake_image = uploadedUrls.length > 0 ? uploadedUrls[0].path : existing_icon
-
-    this.props.updateCake(selectedCake)
+    //Call the helper function
+    const { errors, isValid } = validateEditCakeInput(selectedCake);
+    // Check Validation 
+    if (!isValid) {
+      let { cake_name, cake_description, cake_price, unit_id } = errors
+      let message = cake_name || cake_description || cake_price || unit_id
+      this.showCustomSnackbar(message)
+    } else {
+      await this.handleClose();
+      this.props.updateCake(selectedCake)
+    }
   };
+
+  async closeSnackbar() {
+    await this.setState({ ...this.state, status: false })
+  }
+  /**
+   * Audo hide snackbar
+  */
+  showCustomSnackbar = (message) => {
+    this.setState({ ...this.state, status: true, message, })
+    setTimeout(() => {
+      this.setState({ ...this.state, status: false })
+    }, 3000);
+  }
 
   extractHostname(url) {
     return BASEURL + url
@@ -145,12 +187,28 @@ class Cakes extends Component {
     await this.setState({ ...this.state, selectedCake });
   };
 
+  handleOnSelectComponet = async (event, value, name) => {
+    let { selectedCake, tempSelected } = this.state;
+    selectedCake[name] = value !== null ? selectedCake[name] = value[name] : selectedCake[name] = null;
+    tempSelected[name] = value !== null ? tempSelected[name] = value : tempSelected[name] = null;
+    await this.setState({ ...this.state, selectedCake, tempSelected });
+
+  };
+
   render() {
-    const { classes, cakeList } = this.props;
-    const { openEditDialog, selectedCake: { cake_id, cake_image, cake_name, cake_description, cake_price } } = this.state;
+    const { classes, cakeList, unitList } = this.props;
+    const { openEditDialog, selectedCake: { cake_id, cake_image, cake_name, cake_description, cake_price }, tempSelected } = this.state;
 
     return (
       <React.Fragment>
+        {<Snackbar
+          place={this.state.place}
+          color={this.state.color}
+          message={this.state.message}
+          open={this.state.status}
+          closeNotification={() => this.closeSnackbar()}
+          close
+        />}
         <GridContainer>
           <GridItem xs={12}>
             <Card>
@@ -181,10 +239,16 @@ class Cakes extends Component {
                       Filter: (params) => makeFilterPlaceholder(params, "Cake Description")
                     },
                     {
-                      Header: "Cake Price",
+                      Header: "Cake Price(INR)",
                       accessor: "cake_price",
                       filterMethod: customFilterMethod,
                       Filter: (params) => makeFilterPlaceholder(params, "Cake Price")
+                    },
+                    {
+                      Header: "Unit",
+                      accessor: "display_unit",
+                      filterMethod: customFilterMethod,
+                      Filter: (params) => makeFilterPlaceholder(params, "Cake Unit")
                     },
                     {
                       Header: () => (
@@ -243,7 +307,7 @@ class Cakes extends Component {
                   <Avatar alt={cake_image} src={this.extractHostname(cake_image)} />
                 </GridItem>
 
-                <GridItem sm={12} md={6} lg={6} style={{ marginBottom: '25px' }}>
+                <GridItem sm={12} md={12} lg={12} style={{ marginBottom: '25px' }}>
                   <TextField
                     fullWidth
                     label="Update Image"
@@ -310,6 +374,17 @@ class Cakes extends Component {
                     }}
                   />
                 </GridItem>
+                <GridItem sm={12} md={6} lg={6} style={{ 'marginBottom': '25px' }}>
+                  <Autocomplete
+                    // key={clear_unit}
+                    blurOnSelect={true}
+                    options={unitList}
+                    value={tempSelected.unit_id}
+                    getOptionLabel={(option) => `${option.unit_value} ${option.unit_name}`}
+                    onChange={(e, value) => this.handleOnSelectComponet(e, value, "unit_id")}
+                    renderInput={(params) => <TextField style={{ width: '100%' }} {...params} label="Select Unit" variant="standard" />}
+                  />
+                </GridItem>
               </GridContainer>
               <DialogActions>
                 <Button onClick={this.handleClose} color="transparent">Cancel</Button>
@@ -325,6 +400,7 @@ class Cakes extends Component {
 };
 const mapStateToProps = state => ({
   cakeList: state.AdminCakeReducers.cakeList,
+  unitList: state.AdminUnitReducers.unitList,
   uploadedUrls: state.UploadMediaReducers.uploadedUrls,
   uploadSuccess: state.UploadMediaReducers.uploadSuccess,
 });
@@ -333,6 +409,7 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       getCakeList,
+      getUnitList,
       updateCake,
       deleteCake,
       uploadImage,
