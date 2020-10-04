@@ -28,6 +28,7 @@ import { validateAddCakeInput } from 'validation/addCake';
 */
 import { AddCake } from 'store/actions/AdminActions/cakeActions';
 import { uploadImage } from 'store/actions/uploadMediaActions/uploadMediaActions';
+import { getUnitList } from 'store/actions/AdminActions/unitActions';
 
 import styles from "assets/jss/views/regularFormsStyle";
 import { red } from "@material-ui/core/colors";
@@ -37,11 +38,19 @@ class AddCakes extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      clear_unit: true,
+      tempSelected: {
+        unit_id: null
+      },
       uploadedUrls: [],
       selectedFiles: "",
-      cake_name: null,
-      cake_description: null,
-      cake_price: null,
+      cake: {
+        unit_id: null,
+        cake_image: '',
+        cake_name: null,
+        cake_description: null,
+        cake_price: null,
+      },
       place: 'br',
       color: 'danger',
       message: '',
@@ -49,7 +58,9 @@ class AddCakes extends Component {
     };
 
   };
-  componentDidMount() { };
+  componentDidMount() {
+    this.props.getUnitList()
+  };
   componentDidUpdate(prevProps, prevState) { };
   // componentWillReceiveProps(nextProps) {};
 
@@ -69,12 +80,19 @@ class AddCakes extends Component {
       }, 2000);
       return {
         ...prevState,
+        clear_unit: false,
+        tempSelected: {
+          unit_id: null
+        },
         selectedFiles: "",
         uploadedUrls: [],
-        cake_image: "",
-        cake_name: null,
-        cake_description: null,
-        cake_price: null,
+        cake: {
+          unit_id: null,
+          cake_image: "",
+          cake_name: null,
+          cake_description: null,
+          cake_price: null,
+        }
       };
     }
 
@@ -95,12 +113,17 @@ class AddCakes extends Component {
   /**
    * Handle the change of the input type text.
    */
-  handleChange = async (event, typeName) => {
-    let obj = this.state
+  handleChange = async (event, name) => {
+    // let obj = this.state
+    // const { target } = event;
+    // const value = target.type === 'checkbox' ? target.checked : target.value;
+    // const { name } = target;
+    // await this.setState({ ...obj, [name]: value });
+    let { cake } = this.state;
     const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const { name } = target;
-    await this.setState({ ...obj, [name]: value });
+    cake[name] = value;
+    await this.setState({ ...this.state, cake });
   };
 
   /**
@@ -130,8 +153,9 @@ class AddCakes extends Component {
   submitForm = async (event) => {
     event.preventDefault();
     this.state.cake_image = this.state.uploadedUrls.length > 0 ? this.state.uploadedUrls[0].path : ""
+    this.state.cake.cake_image = this.state.uploadedUrls.length > 0 ? this.state.uploadedUrls[0].path : ""
 
-    const { errors, isValid } = validateAddCakeInput(this.state);
+    const { errors, isValid } = validateAddCakeInput(this.state.cake);
     // Check Validation 
     if (!isValid) {
       let { cake_name, cake_description, cake_price } = errors
@@ -144,7 +168,7 @@ class AddCakes extends Component {
        * Do API Call
       */
       // console.log('this.state :>> ', this.state);
-      this.props.AddCake(this.state)
+      this.props.AddCake(this.state.cake)
     }
   };
 
@@ -164,9 +188,16 @@ class AddCakes extends Component {
     }, 3000);
   }
 
+  handleOnSelectComponet = async (event, value, name) => {
+    let { cake, tempSelected } = this.state;
+    cake[name] = value !== null ? cake[name] = value[name] : cake[name] = null;
+    tempSelected[name] = value !== null ? tempSelected[name] = value : tempSelected[name] = null;
+    await this.setState({ ...this.state, cake, tempSelected });
+  };
+
   render() {
-    const { classes, responseMessage } = this.props;
-    const { cake_name, cake_description, cake_price } = this.state;
+    const { classes, responseMessage, unitList } = this.props;
+    const { clear_unit, tempSelected, cake } = this.state;
 
     return (
       <React.Fragment>
@@ -193,6 +224,18 @@ class AddCakes extends Component {
           <CardBody>
             <form onSubmit={(e) => this.submitForm(e)}>
               <GridContainer spacing={3} >
+                <GridItem sm={12} md={6} lg={6} style={{ 'marginBottom': '25px' }}>
+                  <Autocomplete
+                    key={clear_unit}
+                    blurOnSelect={true}
+                    options={unitList}
+                    value={tempSelected.unit_id}
+                    getOptionLabel={(option) => `${option.unit_value} ${option.unit_name}`}
+                    onChange={(e, value) => this.handleOnSelectComponet(e, value, "unit_id")}
+                    renderInput={(params) => <TextField style={{ width: '100%' }} {...params} label="Select Unit" variant="standard" />}
+                  />
+                </GridItem>
+
                 <GridItem xs={12} sm={6} md={6} lg={6} style={{ marginBottom: '25px' }} >
                   <TextField
                     fullWidth
@@ -221,7 +264,7 @@ class AddCakes extends Component {
                       type: "text",
                       name: "cake_name",
                       autoComplete: "off",
-                      value: cake_name || '',
+                      value: cake.cake_name || '',
                       placeholder: "Enter Name"
                     }}
                   />
@@ -238,7 +281,7 @@ class AddCakes extends Component {
                       autoComplete: "off",
                       onChange: (e) => { this.handleChange(e, "cake_description") },
                       name: "cake_description",
-                      value: cake_description || '',
+                      value: cake.cake_description || '',
                       placeholder: 'Enter Description'
                     }}
                   />
@@ -257,7 +300,7 @@ class AddCakes extends Component {
                       step: "any",
                       onChange: (e) => { this.handleChange(e, "cake_price") },
                       name: "cake_price",
-                      value: cake_price || '',
+                      value: cake.cake_price || '',
                       placeholder: 'Enter Price'
                     }}
                   />
@@ -281,11 +324,13 @@ const mapStateToProps = state => ({
   responseMessage: state.AdminCakeReducers.responseMessage,
   uploadedUrls: state.UploadMediaReducers.uploadedUrls,
   uploadSuccess: state.UploadMediaReducers.uploadSuccess,
+  unitList: state.AdminUnitReducers.unitList
 });
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     AddCake,
     uploadImage,
+    getUnitList,
     resetSuccess: () => ({ type: "REST_RESPONSE_MESSAGE" }),
     resetSuccessFlag: () => ({ type: "RESET_SUCCESS_FLAG" }),
   }, dispatch)
